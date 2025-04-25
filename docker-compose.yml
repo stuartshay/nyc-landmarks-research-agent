@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: nyc-landmarks-research-agent
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - VECTOR_DB_API_URL=${VECTOR_DB_API_URL:-https://vector-db.coredatastore.com}
+      - LANDMARK_METADATA_API_URL=${LANDMARK_METADATA_API_URL:-https://api.coredatastore.com}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # Optional: Add additional services here in the future
+  # For example, if you want to use Redis for distributed 
+  # conversation memory storage:
+  # 
+  # redis:
+  #   image: redis:alpine
+  #   container_name: nyc-landmarks-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   restart: unless-stopped
+
+# Optional: Define volumes for persistent storage
+# volumes:
+#   redis-data:

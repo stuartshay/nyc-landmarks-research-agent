@@ -1,0 +1,89 @@
+name: Deploy to Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      version:
+        description: 'Version to deploy (default: latest)'
+        required: false
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+    
+    - name: Configure Docker for GCP
+      run: |
+        gcloud auth configure-docker gcr.io
+    
+    - name: Set Docker image name and tag
+      run: |
+        if [ "${{ inputs.version }}" = "latest" ]; then
+          echo "DOCKER_TAG=sha-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        else
+          echo "DOCKER_TAG=${{ inputs.version }}" >> $GITHUB_ENV
+        fi
+        echo "DOCKER_IMAGE=gcr.io/${{ secrets.GCP_PROJECT_ID }}/nyc-landmarks-research-agent:${DOCKER_TAG}" >> $GITHUB_ENV
+    
+    - name: Build and push Docker image
+      run: |
+        docker build -t ${{ env.DOCKER_IMAGE }} .
+        docker push ${{ env.DOCKER_IMAGE }}
+    
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy nyc-landmarks-research-agent-${{ inputs.environment }} \
+          --image ${{ env.DOCKER_IMAGE }} \
+          --region us-east1 \
+          --platform managed \
+          --allow-unauthenticated \
+          --memory 1Gi \
+          --cpu 1 \
+          --min-instances 0 \
+          --max-instances 10 \
+          --set-env-vars="ENVIRONMENT=${{ inputs.environment }}" \
+          --update-secrets="OPENAI_API_KEY=openai-api-key:latest,AZURE_OPENAI_ENDPOINT=azure-openai-endpoint:latest,AZURE_OPENAI_DEPLOYMENT=azure-openai-deployment:latest"
+    
+    - name: Output deployed service URL
+      run: |
+        echo "Deployed to: $(gcloud run services describe nyc-landmarks-research-agent-${{ inputs.environment }} --region us-east1 --format='value(status.url)')"
+    
+    - name: Create deployment tag
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const tagName = `deploy-${{ inputs.environment }}-${new Date().toISOString().slice(0, 10)}`;
+          const ref = context.ref.replace('refs/heads/', '');
+          
+          try {
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${tagName}`,
+              sha: context.sha
+            });
+            console.log(`Created tag ${tagName}`);
+          } catch (error) {
+            console.error(`Failed to create tag: ${error}`);
+          }
