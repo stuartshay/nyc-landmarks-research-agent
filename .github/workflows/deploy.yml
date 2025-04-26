@@ -69,7 +69,7 @@ jobs:
         echo "Deployed to: $(gcloud run services describe nyc-landmarks-research-agent-${{ inputs.environment }} --region us-east1 --format='value(status.url)')"
 
     - name: Create deployment tag
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
