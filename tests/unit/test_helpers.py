@@ -1,12 +1,20 @@
 """
 Unit tests for helper functions.
 """
+
 import pytest
+
 from src.util.helpers import (
-    safe_get, clean_text, truncate_text,
-    format_date, get_env_bool, to_json,
-    parse_landmark_id, extract_digits,
-    levenshtein_distance, fuzzy_match
+    clean_text,
+    extract_digits,
+    format_date,
+    fuzzy_match,
+    get_env_bool,
+    levenshtein_distance,
+    parse_landmark_id,
+    safe_get,
+    to_json,
+    truncate_text,
 )
 
 
@@ -16,13 +24,7 @@ class TestHelpers:
     def test_safe_get(self):
         """Test safely getting nested values from a dictionary."""
         # Arrange
-        test_dict = {
-            "level1": {
-                "level2": {
-                    "level3": "value"
-                }
-            }
-        }
+        test_dict = {"level1": {"level2": {"level3": "value"}}}
 
         # Act & Assert
         assert safe_get(test_dict, "level1.level2.level3") == "value"
@@ -71,7 +73,7 @@ class TestHelpers:
             "FALSE_VAR": "false",
             "ONE_VAR": "1",
             "ZERO_VAR": "0",
-            "INVALID_VAR": "invalid"
+            "INVALID_VAR": "invalid",
         }
 
         # Act & Assert
@@ -103,11 +105,9 @@ class TestHelpers:
     def test_parse_landmark_id(self):
         """Test parsing landmark IDs."""
         # Act & Assert
-        assert parse_landmark_id(
-            "The landmark LP-00123 is famous") == "LP-00123"
+        assert parse_landmark_id("The landmark LP-00123 is famous") == "LP-00123"
         assert parse_landmark_id("No landmark ID here") is None
-        assert parse_landmark_id(
-            "Multiple LP-00123 and LP-45678") == "LP-00123"
+        assert parse_landmark_id("Multiple LP-00123 and LP-45678") == "LP-00123"
 
     def test_extract_digits(self):
         """Test extracting digits from text."""
@@ -127,13 +127,11 @@ class TestHelpers:
     def test_fuzzy_match(self):
         """Test fuzzy matching."""
         # Arrange
-        choices = ["Flatiron Building",
-                   "Empire State Building", "Chrysler Building"]
+        choices = ["Flatiron Building", "Empire State Building", "Chrysler Building"]
 
         # Act & Assert
         assert fuzzy_match("flatiron", choices) == "Flatiron Building"
         assert fuzzy_match("empire", choices) == "Empire State Building"
-        assert fuzzy_match(
-            "chrsyelr", choices) == "Chrysler Building"  # Misspelled
+        assert fuzzy_match("chrsyelr", choices) == "Chrysler Building"  # Misspelled
         assert fuzzy_match("unknown", choices, threshold=0.7) is None
         assert fuzzy_match("query", []) is None

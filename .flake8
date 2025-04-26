@@ -1,0 +1,23 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203, W503
+max-complexity = 10
+select = C,E,F,W,B,B950
+exclude =
+    .git,
+    __pycache__,
+    .pytest_cache,
+    .venv,
+    venv,
+    dist,
+    build,
+    *.egg-info
+
+# flake8-docstrings settings
+docstring-convention = google
+
+# flake8-quotes settings
+inline-quotes = double
+multiline-quotes = double
+docstring-quotes = double
+avoid-escape = true

@@ -24,9 +24,9 @@ services:
     restart: unless-stopped
 
   # Optional: Add additional services here in the future
-  # For example, if you want to use Redis for distributed 
+  # For example, if you want to use Redis for distributed
   # conversation memory storage:
-  # 
+  #
   # redis:
   #   image: redis:alpine
   #   container_name: nyc-landmarks-redis

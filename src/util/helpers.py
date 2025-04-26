@@ -2,17 +2,18 @@
 Helper functions for the NYC Landmarks Research Agent.
 Provides utility functions used across the application.
 """
-import os
-import re
+
 import json
 import logging
-from typing import Any, Dict, List, Optional
+import os
+import re
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
-def safe_get(obj: Dict[str, Any], path: str, default: Any = None) -> Any:
+def safe_get(obj: Optional[Dict[str, Any]], path: str, default: Any = None) -> Any:
     """
     Safely get a nested value from a dictionary using dot notation.
 
@@ -24,9 +25,12 @@ def safe_get(obj: Dict[str, Any], path: str, default: Any = None) -> Any:
     Returns:
         Value at path or default if not found
     """
-    parts = path.split('.')
+    if obj is None:
+        return default
 
-    current = obj
+    parts = path.split(".")
+
+    current: Any = obj
     try:
         for part in parts:
             if isinstance(current, dict):
@@ -42,7 +46,7 @@ def safe_get(obj: Dict[str, Any], path: str, default: Any = None) -> Any:
         return default
 
 
-def clean_text(text: str) -> str:
+def clean_text(text: Optional[str]) -> str:
     """
     Clean text by removing extra whitespace and normalizing line breaks.
 
@@ -56,16 +60,16 @@ def clean_text(text: str) -> str:
         return ""
 
     # Replace multiple whitespace with a single space
-    text = re.sub(r'\s+', ' ', text)
+    text = re.sub(r"\s+", " ", text)
 
     # Replace multiple line breaks with at most two
-    text = re.sub(r'\n{3,}', '\n\n', text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
 
     # Strip leading/trailing whitespace
     return text.strip()
 
 
-def truncate_text(text: str, max_length: int = 1000) -> str:
+def truncate_text(text: Optional[str], max_length: int = 1000) -> Optional[str]:
     """
     Truncate text to a maximum length while preserving word boundaries.
 
@@ -80,13 +84,13 @@ def truncate_text(text: str, max_length: int = 1000) -> str:
         return text
 
     # Truncate at word boundary
-    truncated = text[:max_length].rsplit(' ', 1)[0]
+    truncated = text[:max_length].rsplit(" ", 1)[0]
 
     # Add ellipsis
     return f"{truncated}..."
 
 
-def format_date(date_str: str) -> str:
+def format_date(date_str: Optional[str]) -> Optional[str]:
     """
     Format a date string into a more readable format.
 
@@ -100,7 +104,7 @@ def format_date(date_str: str) -> str:
         return None
 
     try:
-        date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        date_obj = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
         return date_obj.strftime("%B %d, %Y")
     except (ValueError, TypeError):
         return date_str
@@ -122,9 +126,9 @@ def get_env_bool(name: str, default: bool = False) -> bool:
         return default
 
     value = value.lower()
-    if value in ('1', 'true', 'yes', 'y', 'on'):
+    if value in ("1", "true", "yes", "y", "on"):
         return True
-    if value in ('0', 'false', 'no', 'n', 'off'):
+    if value in ("0", "false", "no", "n", "off"):
         return False
 
     return default
@@ -153,7 +157,7 @@ def parse_landmark_id(text: str) -> Optional[str]:
     Returns:
         Landmark ID if found, None otherwise
     """
-    match = re.search(r'LP-\d{5}', text)
+    match = re.search(r"LP-\d{5}", text)
     return match.group(0) if match else None
 
 
@@ -167,7 +171,7 @@ def extract_digits(text: str) -> str:
     Returns:
         String containing only digits
     """
-    return ''.join(c for c in text if c.isdigit())
+    return "".join(c for c in text if c.isdigit())
 
 
 def levenshtein_distance(s1: str, s2: str) -> int:
@@ -220,7 +224,7 @@ def fuzzy_match(query: str, choices: List[str], threshold: float = 0.3) -> Optio
 
     query = query.lower()
     best_match = None
-    best_score = float('-inf')
+    best_score = float("-inf")
 
     for choice in choices:
         choice_lower = choice.lower()

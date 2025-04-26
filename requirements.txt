@@ -13,9 +13,27 @@ openai>=1.3.0
 pytest>=7.4.3
 httpx>=0.24.1
 pytest-cov>=4.1.0
+pytest-asyncio>=0.21.1
 
 # Utilities
 python-multipart>=0.0.6
 tenacity>=8.2.2
 loguru>=0.7.0
 azure-identity>=1.15.0  # For Azure AD authentication
+
+# Development dependencies
+pre-commit>=3.5.0        # Pre-commit hooks framework
+black>=25.1.0            # Code formatting
+isort>=5.13.2            # Import sorting
+flake8>=7.0.0            # Linting
+flake8-docstrings>=1.7.0 # Docstring linting
+flake8-quotes>=3.4.0     # Quotation style linting
+flake8-comprehensions>=3.14.0  # List/dict comprehension linting
+mypy>=1.9.0              # Static type checking
+types-requests>=2.31.0   # Type stubs for requests
+types-PyYAML>=6.0.0      # Type stubs for PyYAML
+bandit>=1.7.8            # Security linting
+
+# Jupyter notebook tools
+nbstripout>=0.6.1        # Jupyter notebook output clearing
+nbqa>=1.7.1              # Jupyter notebook linting

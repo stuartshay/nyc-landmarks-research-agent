@@ -126,13 +126,52 @@ VS Code launch configurations are provided for debugging:
 └── setup.py                  # Package setup script
 ```
 
+## Development
+
+### Code Quality Tools
+
+This project uses several code quality tools, all managed through pre-commit hooks:
+
+1. **Black**: Formats Python code to a consistent style
+2. **isort**: Sorts and formats imports
+3. **Flake8**: Lints code for errors and style issues
+4. **mypy**: Performs static type checking
+5. **Bandit**: Scans code for security issues
+6. **nbstripout**: Clears Jupyter notebook outputs
+7. **nbQA**: Applies code quality tools to Jupyter notebooks
+
+### Setting Up Pre-commit Hooks
+
+1. Install development dependencies:
+   ```bash
+   pip install -e ".[dev]"
+   # or
+   pip install pre-commit
+   ```
+
+2. Install the pre-commit hooks:
+   ```bash
+   pre-commit install
+   ```
+
+3. (Optional) Run the hooks against all files:
+   ```bash
+   pre-commit run --all-files
+   ```
+
+The hooks will run automatically on each commit, but you can also run them manually:
+- For a specific file: `pre-commit run --files path/to/file.py`
+- For a specific hook: `pre-commit run black --all-files`
+
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Set up development environment and pre-commit hooks
+3. Create a feature branch (`git checkout -b feature/amazing-feature`)
+4. Make changes and ensure all pre-commit hooks pass
+5. Commit your changes (`git commit -m 'Add some amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ## License
 

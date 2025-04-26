@@ -2,17 +2,19 @@
 Research models for the NYC Landmarks Research Agent.
 Defines internal data structures for research processing.
 """
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
-from datetime import datetime
-from uuid import UUID, uuid4
 
-from src.models.landmark_models import LandmarkSummary, LandmarkPhoto
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+from uuid import uuid4
+
+from pydantic import BaseModel, Field
+
+from src.models.landmark_models import LandmarkPhoto
 
 
 class SourcePassage(BaseModel):
     """A passage of text from a source document."""
-    
+
     text: str = Field(..., description="The text content of the passage")
     source_id: str = Field(..., description="ID of the source document")
     source_title: Optional[str] = Field(None, description="Title of the source document")
@@ -25,7 +27,7 @@ class SourcePassage(BaseModel):
 
 class MemoryEntry(BaseModel):
     """An entry in the conversation memory."""
-    
+
     conversation_id: str = Field(..., description="ID of the conversation")
     timestamp: datetime = Field(default_factory=datetime.now, description="Time when the entry was created")
     query: str = Field(..., description="User query")
@@ -33,15 +35,16 @@ class MemoryEntry(BaseModel):
     landmark_ids: List[str] = Field(default_factory=list, description="IDs of landmarks mentioned")
     landmark_names: List[str] = Field(default_factory=list, description="Names of landmarks mentioned")
     sources_used: List[Dict[str, Any]] = Field(default_factory=list, description="Sources used in the response")
-    
+
     class Config:
         """Configure behavior."""
+
         arbitrary_types_allowed = True
 
 
 class Conversation(BaseModel):
     """A conversation between a user and the research agent."""
-    
+
     id: str = Field(default_factory=lambda: str(uuid4()), description="Conversation ID")
     created_at: datetime = Field(default_factory=datetime.now, description="Creation timestamp")
     updated_at: datetime = Field(default_factory=datetime.now, description="Last update timestamp")
@@ -52,19 +55,19 @@ class Conversation(BaseModel):
 
 class ResearchContext(BaseModel):
     """Context for generating a research report."""
-    
+
     query: str = Field(..., description="The user's query")
     conversation_id: Optional[str] = Field(None, description="ID of existing conversation")
     landmark_id: Optional[str] = Field(None, description="Specific landmark ID to focus on")
     relevant_passages: List[SourcePassage] = Field(default_factory=list, description="Relevant passages from sources")
-    landmark_info: Optional[LandmarkSummary] = Field(None, description="Basic landmark information")
+    landmark_info: Optional[Dict[str, Any]] = Field(None, description="Basic landmark information")
     conversation_history: List[Dict[str, str]] = Field(default_factory=list, description="Past conversation entries")
     images: List[LandmarkPhoto] = Field(default_factory=list, description="Images related to the landmark")
 
 
 class ResearchTask(BaseModel):
     """A research task to be performed by the agent."""
-    
+
     id: str = Field(default_factory=lambda: str(uuid4()), description="Task ID")
     query: str = Field(..., description="The research query")
     conversation_id: Optional[str] = Field(None, description="Conversation ID if this is part of a conversation")
@@ -77,11 +80,11 @@ class ResearchTask(BaseModel):
 
 class PromptTemplate(BaseModel):
     """Template for generating prompts for the language model."""
-    
+
     name: str = Field(..., description="Name of the template")
     template: str = Field(..., description="The template string")
     description: str = Field(..., description="Description of when to use this template")
-    
+
     def format(self, **kwargs) -> str:
         """Format the template with provided values."""
         return self.template.format(**kwargs)
@@ -111,7 +114,7 @@ Your response should be a well-structured, educational research report that:
 6. Uses a professional, educational tone suitable for a heritage organization
 
 Respond with a comprehensive research report formatted in markdown.
-"""
+""",
 )
 
 CONVERSATION_PROMPT_TEMPLATE = PromptTemplate(
@@ -138,5 +141,5 @@ Your response should:
 6. Maintain a helpful, professional tone
 
 Respond with a comprehensive answer formatted in markdown.
-"""
+""",
 )

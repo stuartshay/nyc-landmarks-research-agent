@@ -1,7 +1,8 @@
 """
 Setup script for the NYC Landmarks Research Agent package.
 """
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -33,14 +34,28 @@ setup(
     install_requires=requirements,
     extras_require={
         "dev": [
+            # Testing
             "pytest>=7.4.3",
             "pytest-cov>=4.1.0",
             "pytest-asyncio>=0.21.1",
-            "black>=23.10.1",
-            "isort>=5.12.0",
-            "flake8>=6.1.0",
-            "mypy>=1.6.1",
+            "httpx>=0.24.1",
+            # Linting and formatting
             "pre-commit>=3.5.0",
+            "black>=25.1.0",
+            "isort>=5.13.2",
+            "flake8>=7.0.0",
+            "flake8-docstrings>=1.7.0",
+            "flake8-quotes>=3.4.0",
+            "flake8-comprehensions>=3.14.0",
+            # Type checking
+            "mypy>=1.9.0",
+            "types-requests>=2.31.0",
+            "types-PyYAML>=6.0.0",
+            # Security
+            "bandit>=1.7.8",
+            # Jupyter notebook tools
+            "nbstripout>=0.6.1",
+            "nbqa>=1.7.1",
         ],
     },
 )

@@ -2,17 +2,22 @@
 Landmark data models for the NYC Landmarks Research Agent.
 Defines data structures for landmarks and related entities.
 """
-from typing import Optional, List, Dict, Any
+
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field, HttpUrl
 
 
 class LandmarkLocation(BaseModel):
     """Geographic location and address information of a landmark."""
-    
+
     latitude: float = Field(..., description="Latitude coordinate")
     longitude: float = Field(..., description="Longitude coordinate")
-    borough: str = Field(..., description="NYC borough (Manhattan, Brooklyn, Queens, Bronx, Staten Island)")
+    borough: str = Field(
+        ...,
+        description="NYC borough (Manhattan, Brooklyn, Queens, Bronx, Staten Island)",
+    )
     neighborhood: Optional[str] = Field(None, description="Neighborhood name")
     address: str = Field(..., description="Street address")
     zipcode: Optional[str] = Field(None, description="Postal code")
@@ -20,7 +25,7 @@ class LandmarkLocation(BaseModel):
 
 class LandmarkPhoto(BaseModel):
     """Photo of a landmark with metadata."""
-    
+
     url: HttpUrl = Field(..., description="URL to the image")
     title: Optional[str] = Field(None, description="Title of the photo")
     description: Optional[str] = Field(None, description="Description of the image")
@@ -34,7 +39,7 @@ class LandmarkPhoto(BaseModel):
 
 class Architect(BaseModel):
     """Information about an architect or architectural firm."""
-    
+
     name: str = Field(..., description="Name of the architect or firm")
     info: Optional[str] = Field(None, description="Brief information about the architect")
     period: Optional[str] = Field(None, description="Active period of the architect")
@@ -43,9 +48,12 @@ class Architect(BaseModel):
 
 class DesignationInfo(BaseModel):
     """Information about landmark designation."""
-    
+
     designation_date: datetime = Field(..., description="Date of landmark designation")
-    designation_type: str = Field(..., description="Type of designation (e.g., 'Individual Landmark', 'Historic District')")
+    designation_type: str = Field(
+        ...,
+        description="Type of designation (e.g., 'Individual Landmark', 'Historic District')",
+    )
     designation_report_url: Optional[HttpUrl] = Field(None, description="URL to the designation report")
     nycl_number: str = Field(..., description="NYC Landmarks Commission number (e.g., 'LP-00001')")
     significance_statement: Optional[str] = Field(None, description="Statement of significance")
@@ -53,7 +61,7 @@ class DesignationInfo(BaseModel):
 
 class PlutoData(BaseModel):
     """PLUTO database information for the landmark."""
-    
+
     block: Optional[int] = Field(None, description="Tax block number")
     lot: Optional[int] = Field(None, description="Tax lot number")
     bbl: Optional[str] = Field(None, description="Borough-Block-Lot identifier")
@@ -68,7 +76,7 @@ class PlutoData(BaseModel):
 
 class LandmarkDetail(BaseModel):
     """Detailed information about a landmark."""
-    
+
     lpc_id: str = Field(..., description="Landmarks Preservation Commission ID")
     name: str = Field(..., description="Name of the landmark")
     alternate_names: Optional[List[str]] = Field([], description="Alternative names")
@@ -90,7 +98,7 @@ class LandmarkDetail(BaseModel):
 
 class LandmarkSummary(BaseModel):
     """Summary information about a landmark, used for listings and search results."""
-    
+
     lpc_id: str = Field(..., description="Landmarks Preservation Commission ID")
     name: str = Field(..., description="Name of the landmark")
     style: Optional[str] = Field(None, description="Architectural style")

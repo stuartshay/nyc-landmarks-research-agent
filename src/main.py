@@ -2,11 +2,13 @@
 Main application module for the NYC Landmarks Research Agent.
 Sets up FastAPI application and includes routers.
 """
+
 import uvicorn
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.config import settings
+
 from src.api.router import api_router
+from src.config import settings
 
 # Create FastAPI application
 app = FastAPI(
@@ -29,6 +31,7 @@ app.add_middleware(
 # Include API router
 app.include_router(api_router, prefix="/api")
 
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -39,6 +42,7 @@ async def root():
         "status": "running",
         "docs_url": "/docs",
     }
+
 
 # Health check endpoint
 @app.get("/health")

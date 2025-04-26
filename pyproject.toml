@@ -3,13 +3,13 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
-line-length = 88
+line-length = 120
 target-version = ['py39', 'py310', 'py311']
 include = '\.pyi?$'
 
 [tool.isort]
 profile = "black"
-line_length = 88
+line_length = 120
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
@@ -29,6 +29,10 @@ strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
+
+[[tool.mypy.overrides]]
+module = "src.clients.azure_openai_client"
+warn_unused_ignores = false
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -55,3 +59,7 @@ exclude_lines = [
     "pass",
     "raise ImportError",
 ]
+
+[tool.bandit]
+exclude_dirs = ["tests", "test", ".venv", "venv"]
+skips = ["B101", "B104"]  # Ignore assert statements and hardcoded bindings

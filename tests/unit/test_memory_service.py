@@ -1,13 +1,13 @@
 """
 Unit tests for the memory service.
 """
-import pytest
-from datetime import datetime, timedelta
-import asyncio
-from unittest.mock import patch
 
+from datetime import datetime, timedelta
+
+import pytest
+
+from src.models.research_models import Conversation
 from src.services.memory_service import MemoryService
-from src.models.research_models import Conversation, MemoryEntry
 
 
 class TestMemoryService:
@@ -49,7 +49,7 @@ class TestMemoryService:
             query=query,
             response=response,
             landmark_ids=landmark_ids,
-            landmark_names=landmark_names
+            landmark_names=landmark_names,
         )
 
         # Assert
@@ -102,10 +102,10 @@ class TestMemoryService:
         """Test cleaning up expired conversations."""
         # Arrange
         conversation_id = await memory_service.create_conversation()
-        
+
         # Manipulate the updated_at timestamp to make it expired
-        memory_service.conversations[conversation_id].updated_at = (
-            datetime.now() - timedelta(seconds=memory_service.ttl_seconds * 2)
+        memory_service.conversations[conversation_id].updated_at = datetime.now() - timedelta(
+            seconds=memory_service.ttl_seconds * 2
         )
 
         # Act
