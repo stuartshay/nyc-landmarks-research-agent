@@ -59,7 +59,6 @@ coverage.xml
 
 # IDE files
 .idea/
-.vscode/
 *.swp
 *.swo
 .DS_Store
