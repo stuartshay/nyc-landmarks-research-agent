@@ -39,6 +39,13 @@ The NYC Landmarks Research Agent combines semantic search over landmark designat
 
 4. Create a `.env` file based on `.env.sample` with your API keys and configuration.
 
+5. Install Pre-commit hooks:
+   ```bash
+   pre-commit install
+
+   pre-commit run --all-files
+   ```
+
 ### Using Docker
 
 ```bash

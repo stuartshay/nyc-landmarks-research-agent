@@ -1,0 +1,105 @@
+# NYC Landmarks Research Agent - Project Intelligence
+
+## Code & Implementation Patterns
+
+### API Client Implementation
+- Follow the established pattern of using the `tenacity` library for retry logic on all external API calls
+- Keep all client classes in the `src/clients/` directory
+- Each client should accept an optional API URL in the constructor with a default from settings
+- Use consistent error handling with detailed logging
+- Implement conversion methods from API responses to our internal data models
+
+### Service Layer Implementation
+- Each service should be responsible for a specific domain concern
+- Services should accept dependencies via constructor for easier testing
+- Keep business logic in the service layer, not in API endpoints
+- Prefer async methods throughout the service layer
+- Use explicit typing with appropriate type hints
+
+### API Endpoint Design
+- Use FastAPI's dependency injection for service instantiation
+- Follow RESTful design principles
+- Document all endpoints with detailed docstrings
+- Include appropriate response models and error responses
+- Use proper HTTP status codes for different scenarios
+
+## Project-Specific Conventions
+
+### Naming Conventions
+- Use `snake_case` for variables, functions, and file names
+- Use `PascalCase` for class names and pydantic models
+- Prefix client classes with the name of the service they connect to
+- Suffix service classes with "Service"
+
+### Error Handling
+- Log errors at the appropriate level (debug, info, warning, error)
+- Wrap external API exceptions and provide context
+- Ensure all API endpoints have appropriate error responses
+- Use custom exceptions for different error scenarios
+
+### Testing Patterns
+- Use pytest fixtures for mocking external dependencies
+- Keep test files alongside the modules they test
+- Use descriptive test names that explain what's being tested
+- Test happy paths and error scenarios
+- Use parameterized tests for similar test cases
+
+## Development Workflows
+
+### Environment Setup
+- Always use a virtual environment for development
+- Create a `.env` file with necessary API keys and endpoints
+- Document all required environment variables
+- Use docker-compose for local development with external dependencies
+
+### Pre-Commit Workflow
+- Always run `python scripts/lint_fix.py` before considering a task complete
+- This script will:
+  - Run pre-commit checks on all files
+  - Automatically fix linting errors when possible
+  - Identify files with remaining issues that need manual attention
+- Never commit code that contains linting errors
+- Address all code style issues before submitting code for review
+- Configure auto-formatting tools to maintain consistent code style
+- For manual fixes, focus on these common issues:
+  - Missing docstrings (detected by flake8-docstrings)
+  - Type annotations (detected by mypy)
+  - Security issues (detected by bandit)
+  - Line length violations (if not auto-fixed by black)
+
+### Debugging Practices
+- Add detailed logging at appropriate levels
+- Set LOG_LEVEL=DEBUG for detailed debug information
+- Look for timeouts or connection issues with external APIs
+- Check Azure OpenAI token limits and usage
+
+## Implementation Notes & Discoveries
+
+### Vector Store Client
+- The CoreDataStore Vector API requires explicit filtering for landmark_id
+- Relevance scores below 0.6 are generally not useful
+- The API has a maximum limit of 50 results per query
+
+### Landmark Metadata Client
+- The API returns inconsistent field names (objectId vs. lpcNumber)
+- Photo data requires separate API calls
+- Some landmarks have minimal metadata in the API responses
+
+### Memory Service
+- In-memory storage is sufficient for development but not for production
+- Use TTL settings to prevent memory leaks
+- Plan for Redis integration in production
+
+### Azure OpenAI Integration
+- GPT-4 provides the best research report quality
+- Prompt engineering is critical for good report structure
+- System instructions significantly impact the style and tone of reports
+- Token limits can be an issue for long research reports with many sources
+
+## Project Evolution Tracking
+
+### April 26, 2025
+- Established memory bank with comprehensive project documentation
+- Identified key implementation priorities
+- Created detailed project plan with milestones and timelines
+- Documented current status and next steps
