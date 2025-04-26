@@ -291,6 +291,12 @@ class ResearchService:
                     query=entry["query"],
                     report=entry["response"],
                     timestamp=datetime.now(),  # We don't have the original timestamp
+                    images=[],  # Empty list since we don't have image data from history
+                    sources=[],  # Empty list since we don't have source data from history
+                    landmark_id=None,  # We don't know the landmark ID
+                    landmark_name=None,  # We don't know the landmark name
+                    related_landmarks=[],  # Empty list since we don't have related landmarks data
+                    suggested_queries=[],  # Empty list since we don't have suggested queries data
                 )
                 responses.append(response)
 
@@ -342,14 +348,7 @@ class ResearchService:
         if landmark_id:
             landmark_detail = await self.landmark_service.get_landmark_details(landmark_id)
             if landmark_detail:
-                # In a real implementation, we would convert the LandmarkDetail to LandmarkSummary
-                # This is a simplified version
-                landmark_info = {
-                    "lpc_id": landmark_detail.lpc_id,
-                    "name": landmark_detail.name,
-                    "borough": landmark_detail.location.borough,
-                    "designation_date": landmark_detail.designation.designation_date,
-                }
+                landmark_info = landmark_detail
 
         # Create the research context
         context = ResearchContext(
@@ -441,8 +440,8 @@ class ResearchService:
 LANDMARK INFORMATION:
 ID: {context.landmark_info.lpc_id}
 Name: {context.landmark_info.name}
-Borough: {context.landmark_info.borough}
-Designation Date: {context.landmark_info.designation_date}
+Borough: {context.landmark_info.location.borough}
+Designation Date: {context.landmark_info.designation.designation_date}
 """
 
             conversation_history_text = ""
@@ -497,7 +496,7 @@ Cite relevant passages when appropriate using [Source: Name, Page: X] format.
                     temperature=0.5,
                 )
 
-            return generated_text
+            return str(generated_text)
         except Exception as e:
             logger.error(f"Error generating research text: {str(e)}")
             raise ValueError(f"Failed to generate research report: {str(e)}")
@@ -521,7 +520,7 @@ Cite relevant passages when appropriate using [Source: Name, Page: X] format.
             for photo in landmark_photos:
                 try:
                     image = LandmarkImage(
-                        url=str(photo.url),
+                        url=photo.url,  # Pass as HttpUrl, not str
                         caption=photo.description,
                         year=photo.year,
                         source=photo.source,
@@ -549,7 +548,7 @@ Cite relevant passages when appropriate using [Source: Name, Page: X] format.
         Returns:
             List of SourceDocument objects
         """
-        sources = []
+        sources: List[SourceDocument] = []
         seen_source_ids = set()
 
         # Sort by relevance score
@@ -593,8 +592,8 @@ Cite relevant passages when appropriate using [Source: Name, Page: X] format.
         # In a real system, this would use NLP techniques or pattern matching
 
         # Placeholder implementation - would need to be replaced with actual extraction logic
-        landmark_names = []
-        landmark_ids = []
+        landmark_names: List[str] = []
+        landmark_ids: List[str] = []
 
         # Simple regex pattern for LPC IDs like LP-00001
         import re
@@ -625,7 +624,7 @@ Cite relevant passages when appropriate using [Source: Name, Page: X] format.
         # In a real system, this would use NLP techniques or a separate LLM call
 
         # Placeholder implementation with common follow-up patterns
-        suggestions = [
+        suggestions: List[str] = [
             "What is the architectural style of this landmark?",
             "When was this landmark designated?",
             "Who was the architect of this landmark?",

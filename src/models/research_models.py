@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from src.models.landmark_models import LandmarkPhoto
+from src.models.landmark_models import LandmarkDetail, LandmarkPhoto
 
 
 class SourcePassage(BaseModel):
@@ -60,7 +60,7 @@ class ResearchContext(BaseModel):
     conversation_id: Optional[str] = Field(None, description="ID of existing conversation")
     landmark_id: Optional[str] = Field(None, description="Specific landmark ID to focus on")
     relevant_passages: List[SourcePassage] = Field(default_factory=list, description="Relevant passages from sources")
-    landmark_info: Optional[Dict[str, Any]] = Field(None, description="Basic landmark information")
+    landmark_info: Optional[LandmarkDetail] = Field(None, description="Basic landmark information")
     conversation_history: List[Dict[str, str]] = Field(default_factory=list, description="Past conversation entries")
     images: List[LandmarkPhoto] = Field(default_factory=list, description="Images related to the landmark")
 

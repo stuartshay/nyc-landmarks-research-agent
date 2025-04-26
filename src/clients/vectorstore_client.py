@@ -78,7 +78,7 @@ class VectorStoreClient:
             payload["min_score"] = min_score
 
         try:
-            response = requests.post(endpoint, json=payload, headers=self.headers)
+            response = requests.post(endpoint, json=payload, headers=self.headers, timeout=10)
             response.raise_for_status()
             result: Dict[str, Any] = response.json()
             return result
@@ -112,7 +112,7 @@ class VectorStoreClient:
         endpoint = f"{self.api_url}/document/{document_id}"
 
         try:
-            response = requests.get(endpoint, headers=self.headers)
+            response = requests.get(endpoint, headers=self.headers, timeout=10)
             response.raise_for_status()
             result: Dict[str, Any] = response.json()
             return result
@@ -154,7 +154,7 @@ class VectorStoreClient:
         }
 
         try:
-            response = requests.post(endpoint, json=payload, headers=self.headers)
+            response = requests.post(endpoint, json=payload, headers=self.headers, timeout=10)
             response.raise_for_status()
 
             data = response.json()

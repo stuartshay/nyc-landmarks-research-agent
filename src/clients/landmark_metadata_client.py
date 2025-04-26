@@ -59,7 +59,7 @@ class LandmarkMetadataClient:
         endpoint = f"{self.api_url}/api/LPCReport/{lpc_id}"
 
         try:
-            response = requests.get(endpoint, headers=self.headers)
+            response = requests.get(endpoint, headers=self.headers, timeout=10)
             response.raise_for_status()
 
             data = response.json()
@@ -183,7 +183,7 @@ class LandmarkMetadataClient:
         params = self._prepare_search_params(query, borough, neighborhood, style, page, page_size)
 
         try:
-            response = requests.get(endpoint, params=params, headers=self.headers)
+            response = requests.get(endpoint, params=params, headers=self.headers, timeout=10)
             response.raise_for_status()
             data = response.json()
             return self._process_search_results(data, page, page_size)
@@ -219,7 +219,7 @@ class LandmarkMetadataClient:
         params: Dict[str, str] = {"LpcId": str(lpc_id), "limit": "50", "page": "1"}
 
         try:
-            response = requests.get(endpoint, params=params, headers=self.headers)
+            response = requests.get(endpoint, params=params, headers=self.headers, timeout=10)
             response.raise_for_status()
 
             data = response.json()
