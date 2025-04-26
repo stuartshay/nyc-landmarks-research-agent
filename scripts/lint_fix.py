@@ -4,7 +4,6 @@ A helper script to run pre-commit checks and auto-fix linting issues when possib
 This script is designed to be run before considering a task complete.
 """
 
-import shlex
 import subprocess  # nosec B404 - This is a controlled use for specific commands
 import sys
 from typing import List, Tuple
